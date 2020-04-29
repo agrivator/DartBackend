@@ -1,5 +1,6 @@
 from django.db import models
 
+# TODO: Add correct categories.
 CATEGORIES = [
     ('Fruits and Vegetables', 'Fruits and Vegetables'),
     ('Medicine', 'Medicine'),
