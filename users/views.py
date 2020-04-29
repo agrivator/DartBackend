@@ -10,15 +10,15 @@ class ProductViewset(viewsets.ModelViewSet):
     
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    
+    filterset_fields = ('id','category')
+
     def perform_create(self, serializer):
         serializer.save()
 
-    def retrieve(self, request, *args, **kwargs):
+    '''def retrieve(self, request, *args, **kwargs):
         params = kwargs
         print(params['pk'])
         product = Product.objects.filter(category=params['pk'])
         serializer = ProductSerializer(product, many=True)
-        return Response(serializer.data)
-
-    
+        return Response(serailizer.data)
+    '''
