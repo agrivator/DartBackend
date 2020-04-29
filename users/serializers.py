@@ -3,9 +3,6 @@ from .models import *
 
 class ProductSerializer(serializers.ModelSerializer):
 
-    farmer = serializers.HiddenField(
-    default=serializers.CurrentUserDefault()
-)
     
     class Meta:
         model   =  Product
