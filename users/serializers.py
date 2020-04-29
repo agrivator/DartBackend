@@ -1,12 +1,8 @@
 from rest_framework import serializers
 from .models import *
 
-class ProductSerializer(serializers.ModelSerializer):
 
-    farmer = serializers.HiddenField(
-    default=serializers.CurrentUserDefault()
-)
-    
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model   =  Product
-        fields  =  ('__all__')
+        model = Product
+        fields = ('__all__')
