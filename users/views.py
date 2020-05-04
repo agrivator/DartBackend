@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django_filters import rest_framework as filters
 
+from rest_auth.registration.views import RegisterView
+
 
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -8,6 +10,12 @@ from .models import *
 from .serializers import *
 
 # Create your views here.
+
+class CustomRegisterView(RegisterView):
+        queryset = User.objects.all()
+        serializer_class = CustomRegisterSerializer
+
+
 class ProductFilter(filters.FilterSet):
 
     category = filters.CharFilter(lookup_expr='icontains')
