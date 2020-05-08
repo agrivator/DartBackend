@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 
+import django.utils
 
 from .managers import UserManager
 
@@ -56,7 +57,40 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 
-    
+class Address(models.Model):
+    #User_id #Foreign key from the user model
+    locality=models.CharField(max_length=50)
+    city=models.CharField(max_length=50)
+    district=models.CharField(max_length=50)
+    state=models.CharField(max_length=50)
+    pincode=models.CharField(max_length=12)
+    latitude=models.DecimalField(max_digits=9,decimal_places=6)
+    longitude=models.DecimalField(max_digits=9,decimal_places=6)
+
+class Coupon(models.Model):
+    #coupon_id
+    discount=models.DecimalField(max_digits=5,decimal_places=2,default=0.00)
+    expiry_date=models.DateTimeField(default=django.utils.timezone.now())
+    max=models.DecimalField(max_digits=5,decimal_places=2,default=0.00)
+
+class Order(models.Model):
+    #Order_id
+    #User_id #ForeignKey from the user model
+    #transaction id in order is avoided since it will create name error,since transaction class defined below order class
+    coupon=models.ForeignKey(Coupon,on_delete=models.PROTECT)
+    #shop_id #foreign key from the shop model
+    #Rider_id #ForeignKey from the rider model
+    time_stamp_order=models.DateField(auto_now=True,editable=False,null=False,blank=False)
+
+class Transaction(models.Model):
+    #transaction_id
+    #User_id #Foreign key to the user model
+    order=models.OneToOneField(Order,on_delete=models.CASCADE)
+    time_stamp_transaction=models.DateField(auto_now=True)
+    amount=models.DecimalField(max_digits=10,decimal_places=2,default=0.00)
+
+
+
 
 
 

@@ -26,12 +26,37 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.phone= self.validated_data.get('phone', '')
         user.user_type = self.validated_data.get('user_type', '')
         user.save(update_fields=['first_name','last_name','user_type', 'phone'])
-    
+
 class CustomUserDetailsSerializer(serializers.ModelSerializer):
 
         class Meta:
             model = User
             fields = ('first_name','last_name','phone','user_type')
+
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Address
+        fields=['locality','city','district','state','pincode','latitude','longitude']
+
+class CouponSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Coupon
+        fields=['discount','expiry_date','max']
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Order
+        fields=['coupon','time_stamp_order']
+
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Transaction
+        fields=['order','amount','time_stamp_transaction']
+
+
+
 
 
 class ProductSerializer(serializers.ModelSerializer):

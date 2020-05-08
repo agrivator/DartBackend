@@ -16,12 +16,39 @@ class CustomRegisterView(RegisterView):
         serializer_class = CustomRegisterSerializer
 
 
+
+class AddressViewSet(viewsets.ModelViewSet):
+    queryset=Address.objects.all()
+    serializer_class=AddressSerializer
+
+
+
+class CouponViewset(viewsets.ModelViewSet):
+    queryset=Coupon.objects.all()
+    serializer_class=CouponSerializer
+
+
+
+class OrderViewset(viewsets.ModelViewSet):
+    queryset=Order.objects.all()
+    serializer_class=OrderSerializer
+
+
+class TransactionViewSet(viewsets.ModelViewSet):
+    queryset=Transaction.objects.all()
+    serializer_class=TransactionSerializer
+
+
+
+
+
+
 class ProductFilter(filters.FilterSet):
 
     category = filters.CharFilter(lookup_expr='icontains')
     name = filters.CharFilter(lookup_expr='icontains')
-class ProductViewset(viewsets.ModelViewSet):  
-    
+class ProductViewset(viewsets.ModelViewSet):
+
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filter_backends = (filters.DjangoFilterBackend,)
