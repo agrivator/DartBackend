@@ -14,3 +14,5 @@ class Shop(models.Model):
     image_url = models.CharField(max_length=2048, null=True)
     latitude=models.DecimalField(max_digits=8, decimal_places=6,default=0)
     longitude=models.DecimalField(max_digits=9, decimal_places=6,default=0)
+
+# Works
