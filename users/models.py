@@ -83,3 +83,10 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+class Cart(models.Model):
+    Userid = models.ForeignKey(User,on_delete=models.CASCADE)#key needs to be created in user
+    Pid = models.ForeignKey(Product,on_delete=models.CASCADE)#key needs to be created in product
+    Quantity = models.FloatField()
+    Total = models.FloatField()
+    
