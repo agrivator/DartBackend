@@ -4,3 +4,6 @@ from .models import *
 
 admin.site.register(Product)
 admin.site.register(User)
+admin.site.register(Customer)
+admin.site.register(ShopKeeper)
+admin.site.register(Rider)

@@ -14,10 +14,10 @@ class CustomerRegistrationSerializer(serializers.ModelSerializer):
  
     class Meta:
         model = Customer
-        fields = '__all__'
+        fields = ['first_name','last_name','email','password','token']
  
     def create(self, validated_data):
-        return Customer.objects.create_student(**validated_data)
+        return Customer.objects.create_customer(**validated_data)
  
 class ShopKeeperRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -29,10 +29,10 @@ class ShopKeeperRegistrationSerializer(serializers.ModelSerializer):
  
     class Meta:
         model = ShopKeeper
-        fields = '__all__'
+        fields = ['first_name','last_name','email','password','token']
  
     def create(self, validated_data):
-        return ShopKeeper.objects.create_employee(**validated_data)
+        return ShopKeeper.objects.create_shopkeeper(**validated_data)
 
 class RiderRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -44,10 +44,10 @@ class RiderRegistrationSerializer(serializers.ModelSerializer):
  
     class Meta:
         model = Rider
-        fields = '__all__'
+        fields = ['first_name','last_name','email','password','token']
  
     def create(self, validated_data):
-        return Rider.objects.create_employee(**validated_data)
+        return Rider.objects.create_rider(**validated_data)
 
 
 

@@ -15,7 +15,10 @@ router.register(r'products', views.ProductViewset,basename='products')
 urlpatterns = router.urls
 
 urlpatterns += [
-    url(r'^customer/?$', views.CustomerRegistration.as_view()),
-    url(r'^rider/?$', views.RiderRegistration.as_view()),
-    url(r'^shopkeeper/?$', views.ShopKeeperRegistration.as_view()),
+    url('customer/signup', views.CustomerRegistration.as_view()),
+    url('customer/login', views.CustomerRegistration.as_view()),
+    url('rider/signup', views.RiderRegistration.as_view()),
+    url('rider/login', views.RiderRegistration.as_view()),
+    url('shopkeeper/signup', views.ShopKeeperRegistration.as_view()),
+    url('shopkeeper/login', views.ShopKeeperRegistration.as_view()),
 ]
