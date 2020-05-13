@@ -1,37 +1,175 @@
 from rest_framework import serializers
 from .models import *
-
 from rest_auth.registration.serializers import RegisterSerializer
-
-phone_number_regex = RegexValidator(
-    regex= "^((\+91|91|0)[\- ]{0,1})?[456789]\d{9}$",
-    message="Please Enter 10/11 digit mobile number or landline as 0<std code><phone number>",
-    code="invalid_mobile",
-)
-
-class CustomRegisterSerializer(RegisterSerializer):
-    username = None
-    phone = serializers.CharField(max_length=14, validators=[phone_number_regex])
-    first_name = serializers.CharField(max_length=30, label='First Name')
-    last_name = serializers.CharField(max_length=30, label='Last Name')
-    password1 = serializers.CharField(required=True, write_only=True)
-    password2 = serializers.CharField(required=True, write_only=True)
-    user_type = serializers.ChoiceField(choices=USER_CHOICES)
+from django.contrib.auth import authenticate
 
 
-    def custom_signup(self, request, user):
-        user.first_name = self.validated_data.get('first_name', '')
-        user.last_name = self.validated_data.get('last_name', '')
-        user.password = self.validated_data.get('passoword', '')
-        user.phone= self.validated_data.get('phone', '')
-        user.user_type = self.validated_data.get('user_type', '')
-        user.save(update_fields=['first_name','last_name','user_type', 'phone'])
+class CustomerRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True
+    )
+    token = serializers.CharField(max_length=255, read_only=True)
+ 
+    class Meta:
+        model = Customer
+        fields = '__all__'
+ 
+    def create(self, validated_data):
+        return Customer.objects.create_student(**validated_data)
+ 
+class ShopKeeperRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True
+    )
+    token = serializers.CharField(max_length=255, read_only=True)
+ 
+    class Meta:
+        model = ShopKeeper
+        fields = '__all__'
+ 
+    def create(self, validated_data):
+        return ShopKeeper.objects.create_employee(**validated_data)
+
+class RiderRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True
+    )
+    token = serializers.CharField(max_length=255, read_only=True)
+ 
+    class Meta:
+        model = Rider
+        fields = '__all__'
+ 
+    def create(self, validated_data):
+        return Rider.objects.create_employee(**validated_data)
+
+
+
+class CustomerLoginSerializer(serializers.Serializer):
+    email = serializers.CharField(max_length=255)
+    password = serializers.CharField(max_length=128, write_only=True)
+    token = serializers.CharField(max_length=255, read_only=True)
+ 
+    def validate(self, data):
+        email = data.get('email', None)
+        password = data.get('password', None)
+        user = authenticate(username=email, password=password)
+
+
+        if password is None:
+            raise serializers.ValidationError(
+                'A password is required to log in.'
+            )
+
+        if email is None:
+            raise serializers.ValidationError(
+                'An email address is required to log in.'
+            )
+ 
     
-class CustomUserDetailsSerializer(serializers.ModelSerializer):
+        if user is None:
+            raise serializers.ValidationError(
+                'A user with this email and password is not found.'
+            )
+        try:
+            userObj = Customer.objects.get(email=user.email)
+        except Customer.DoesNotExist:
+            userObj = None       
+ 
+        if not user.is_active:
+            raise serializers.ValidationError(
+                'This user has been deactivated.'
+            )
+        return {
+            'email': user.email,
+            'token': user.token
+        }
 
-        class Meta:
-            model = User
-            fields = ('first_name','last_name','phone','user_type')
+class ShopKeeperLoginSerializer(serializers.Serializer):
+    email = serializers.CharField(max_length=255)
+    password = serializers.CharField(max_length=128, write_only=True)
+    token = serializers.CharField(max_length=255, read_only=True)
+ 
+    def validate(self, data):
+        email = data.get('email', None)
+        password = data.get('password', None)
+        user = authenticate(username=email, password=password)
+
+
+        if password is None:
+            raise serializers.ValidationError(
+                'A password is required to log in.'
+            )
+
+        if email is None:
+            raise serializers.ValidationError(
+                'An email address is required to log in.'
+            )
+ 
+    
+        if user is None:
+            raise serializers.ValidationError(
+                'A user with this email and password is not found.'
+            )
+        try:
+            userObj = ShopKeeper.objects.get(email=user.email)
+        except ShopKeeper.DoesNotExist:
+            userObj = None       
+ 
+        if not user.is_active:
+            raise serializers.ValidationError(
+                'This user has been deactivated.'
+            )
+        return {
+            'email': user.email,
+            'token': user.token
+        }
+
+class RiderLoginSerializer(serializers.Serializer):
+    email = serializers.CharField(max_length=255)
+    password = serializers.CharField(max_length=128, write_only=True)
+    token = serializers.CharField(max_length=255, read_only=True)
+ 
+    def validate(self, data):
+        email = data.get('email', None)
+        password = data.get('password', None)
+        user = authenticate(username=email, password=password)
+
+
+        if password is None:
+            raise serializers.ValidationError(
+                'A password is required to log in.'
+            )
+
+        if email is None:
+            raise serializers.ValidationError(
+                'An email address is required to log in.'
+            )
+ 
+    
+        if user is None:
+            raise serializers.ValidationError(
+                'A user with this email and password is not found.'
+            )
+        try:
+            userObj = Rider.objects.get(email=user.email)
+        except Rider.DoesNotExist:
+            userObj = None       
+ 
+        if not user.is_active:
+            raise serializers.ValidationError(
+                'This user has been deactivated.'
+            )
+        return {
+            'email': user.email,
+            'token': user.token
+        }
 
 
 class ProductSerializer(serializers.ModelSerializer):

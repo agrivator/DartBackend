@@ -138,7 +138,9 @@ STATIC_URL = '/static/'
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-    'rest_framework.authentication.TokenAuthentication',
+    'users.backends.JWTCustomerAuthentication',
+    'users.backends.JWTShopKeeperAuthentication',
+    'users.backends.JWTRiderAuthentication',
 )
 }
 
@@ -152,17 +154,17 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
-REST_AUTH_REGISTER_SERIALIZERS = {
-    "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
-}
+# REST_AUTH_REGISTER_SERIALIZERS = {
+#     "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
+# }
 
-ACCOUNT_FORMS = {
-    'login': 'allauth.account.forms.LoginForm',
-    'signup': 'users.forms.CustomSignupForm',
-    'add_email': 'allauth.account.forms.AddEmailForm',
-    'change_password': 'allauth.account.forms.ChangePasswordForm',
-    'set_password': 'allauth.account.forms.SetPasswordForm',
-    'reset_password': 'allauth.account.forms.ResetPasswordForm',
-    'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
-    'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
-}
+# ACCOUNT_FORMS = {
+#     'login': 'allauth.account.forms.LoginForm',
+#     'signup': 'users.forms.CustomSignupForm',
+#     'add_email': 'allauth.account.forms.AddEmailForm',
+#     'change_password': 'allauth.account.forms.ChangePasswordForm',
+#     'set_password': 'allauth.account.forms.SetPasswordForm',
+#     'reset_password': 'allauth.account.forms.ResetPasswordForm',
+#     'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
+#     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+# }

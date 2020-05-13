@@ -3,9 +3,9 @@ from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
+from django.conf import settings
 
-
-from .managers import UserManager
+from .managers import UserManager,CustomerManager,RiderManager,ShopKeeperManager
 
 
 phone_number_regex = RegexValidator(
@@ -14,50 +14,84 @@ phone_number_regex = RegexValidator(
     code="invalid_mobile",
 )
 
-USER_CHOICES = [
-    ("customer","customer"),
-    ("shopkeeper","shopkeeper"),
-    ("rider","rider")
-]
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(_('email address'), unique=True)
-    first_name = models.CharField(_('first name'), max_length=30, blank=True)
-    last_name = models.CharField(_('last name'), max_length=30, blank=True)
-    date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
-    is_active = models.BooleanField(_('active'), default=True)
-    is_staff = models.BooleanField(_('active'), default=True)
-    phone = models.CharField(max_length=14, validators=[phone_number_regex])
-    user_type = models.CharField(choices=USER_CHOICES,max_length=50)
-
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(db_index=True, unique=True)
+    phone = models.CharField(validators=[phone_number_regex],max_length=14)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+ 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name','last_name','phone']
+    
     objects = UserManager()
+ 
+    @property
+    def token(self):
+        dt = datetime.now() + timedelta(days=days)
+        token = jwt.encode({
+            'id': user_id,
+            'exp': int(time.mktime(dt.timetuple()))
+        }, settings.SECRET_KEY, algorithm='HS256')
+        return token.decode('utf-8')
+ 
+    def get_full_name(self):
+        return (self.first_name+' '+self.last_name)
+ 
+    def get_short_name(self):
+        return self.first_name
+ 
+    def natural_key(self):
+        return (self.first_name, self.last_name)
+ 
+    def __str__(self):
+        return self.email
+
+
+class Customer(User, PermissionsMixin):
+    cart_id = models.CharField(max_length=50,db_index=True)
+ 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name','phone']
+ 
+    objects = CustomerManager()
+ 
+    def __str__(self):
+        return self.first_name
+
+
+class ShopKeeper(User, PermissionsMixin):
+    shop_id = models.CharField(max_length=50,db_index=True)
+ 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name','phone']
+ 
+    objects = ShopKeeperManager()
+ 
+    def __str__(self):
+        return self.first_name
+
+
+class Rider(User, PermissionsMixin):
+    shop_id = models.CharField(max_length=50,db_index=True)
+
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name','last_name','user_type','phone']
-
-    class Meta:
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
-
-    def get_full_name(self):
-        '''
-        Returns the first_name plus the last_name, with a space in between.
-        '''
-        full_name = '%s %s' % (self.first_name, self.last_name)
-        return full_name.strip()
-
-    def get_short_name(self):
-        '''
-        Returns the short name for the user.
-        '''
+    REQUIRED_FIELDS = ['first_name', 'last_name','phone']
+ 
+    objects = RiderManager()
+ 
+    def __str__(self):
         return self.first_name
 
 
 
 
-
     
+
 
 
 
